@@ -13,12 +13,12 @@ export async function createUser({ organization, user }: CreateUserParams) {
   try {
     await connectToDatabase();
 
-    const organizationUser = await Organization.findById(organization._id)
+    const organizationUser = await Organization.findById(organization._id);
     if (!organizationUser) throw new Error("Organizer not found");
 
     const newUser = await User.create({
       ...user,
-      organizationId: organization._id 
+      organizationId: organization._id,
     });
 
     return JSON.parse(JSON.stringify(newUser));

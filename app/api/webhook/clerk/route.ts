@@ -6,10 +6,12 @@ import { Webhook } from "svix";
 import { createUser, deleteUser, updateUser } from "@/actions/user.actions";
 
 export async function POST(req: Request) {
-  const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
+  const CLERK_WEBHOOK_SIGNING_SECRET = process.env.CLERK_WEBHOOK_SIGNING_SECRET;
 
-  if (!WEBHOOK_SECRET) {
-    throw new Error("Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local");
+  if (!CLERK_WEBHOOK_SIGNING_SECRET) {
+    throw new Error(
+      "Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local"
+    );
   }
 
   // Get the headers
@@ -28,11 +30,10 @@ export async function POST(req: Request) {
   const body = JSON.stringify(payload);
 
   // Create a new Svix instance with your secret
-  const wh = new Webhook(WEBHOOK_SECRET);
+  const wh = new Webhook(CLERK_WEBHOOK_SIGNING_SECRET);
 
   let evt: WebhookEvent;
 
-  // Verify the payload with the headers
   try {
     evt = wh.verify(body, {
       "svix-id": svix_id,
@@ -41,7 +42,9 @@ export async function POST(req: Request) {
     }) as WebhookEvent;
   } catch (err) {
     console.error("Error verifying webhook:", err);
-    return new Response("Error occurred during verification", { status: 400 });
+    return new Response("Error occured", {
+      status: 400,
+    });
   }
 
   // Get the ID and type of the event
@@ -50,13 +53,7 @@ export async function POST(req: Request) {
 
   // CREATE
   if (eventType === "user.created") {
-    const {
-      id,
-      email_addresses,
-      image_url,
-      first_name,
-      last_name,
-    } = evt.data;
+    const { id, email_addresses, image_url, first_name, last_name } = evt.data;
 
     const user = {
       clerkId: id,
@@ -65,26 +62,35 @@ export async function POST(req: Request) {
       lastName: last_name!,
       photo: image_url,
       approved: false,
-      role: "user"
+      role: "user",
     };
 
     const organization = {
-        _id: "id_organisasi_xxx",
-        organizationName: "Nama Organisasi",
-      };
+      _id: "id_organisasi_xxx",
+      organizationName: "Nama Organisasi",
+    };
 
     try {
-      const newUser = await createUser({user, organization});
+      const newUser = await createUser({ user, organization });
       if (newUser) {
-        const result = await (await clerkClient()).users.updateUserMetadata(id, {
-          publicMetadata: { userId: newUser._id, approved: false, organization, role: "user" },
+        const result = await (
+          await clerkClient()
+        ).users.updateUserMetadata(id, {
+          publicMetadata: {
+            userId: newUser._id,
+            approved: false,
+            organization,
+            role: "user",
+          },
         });
         console.log("New user created:", result);
       }
       return NextResponse.json({ message: "OK", user: newUser });
     } catch (err) {
       console.error("Error during user creation:", err);
-      return new Response("Error occurred during user creation", { status: 500 });
+      return new Response("Error occurred during user creation", {
+        status: 500,
+      });
     }
   }
 
@@ -97,7 +103,7 @@ export async function POST(req: Request) {
       lastName: last_name!,
       photo: image_url,
       approved: false,
-      role: "user"
+      role: "user",
     };
 
     try {
@@ -118,7 +124,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "OK", user: deletedUser });
     } catch (err) {
       console.error("Error during user deletion:", err);
-      return new Response("Error occurred during user deletion", { status: 500 });
+      return new Response("Error occurred during user deletion", {
+        status: 500,
+      });
     }
   }
 
