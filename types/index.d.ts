@@ -9,6 +9,7 @@ export type CreateUserParams = {
     photo: string;
     firstName: string;
     lastName: string;
+    role: string;
     approved: boolean;
   };
 };
@@ -17,6 +18,7 @@ export type UpdateUserParams = {
   firstName?: string;
   lastName?: string;
   photo?: string;
+  role?: string;
 };
 
 export type CreateOrganizationParams = {
