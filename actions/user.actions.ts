@@ -2,24 +2,23 @@
 
 import { revalidatePath } from "next/cache";
 
-import User from "@/lib/database/models/user.model"
-import { connectToDatabase } from "@/lib/database/mongoose"; 
-import { handleError } from "@/utils"
+import User from "@/lib/database/models/user.model";
+import { connectToDatabase } from "@/lib/database/mongoose";
+import { handleError } from "@/utils";
 import { CreateUserParams, UpdateUserParams } from "@/types";
 import Organization from "@/lib/database/models/organization.model";
 
 // CREATE
-export async function createUser({organization, user}: CreateUserParams) {
+export async function createUser({ organization, user }: CreateUserParams) {
   try {
     await connectToDatabase();
 
-
-    const organizationUser = await Organization.findById(organization)
-    if(!organizationUser) throw new Error("Organizer not found")
+    const organizationUser = await Organization.findById(organization._id)
+    if (!organizationUser) throw new Error("Organizer not found");
 
     const newUser = await User.create({
-        ...user,
-        organizationUser: organization
+      ...user,
+      organizationId: organization._id 
     });
 
     return JSON.parse(JSON.stringify(newUser));

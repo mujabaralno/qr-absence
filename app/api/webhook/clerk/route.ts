@@ -90,14 +90,14 @@ export async function POST(req: Request) {
 
   // UPDATE
   if (eventType === "user.updated") {
-    const { id: updatedUserId, image_url, first_name, last_name, unsafe_metadata } = evt.data;
+    const { id: updatedUserId, image_url, first_name, last_name } = evt.data;
 
     const user = {
       firstName: first_name!,
       lastName: last_name!,
       photo: image_url,
-      npm: unsafe_metadata.npm as string,
-      angkatan: unsafe_metadata.angkatan as string,
+      approved: false,
+      role: "user"
     };
 
     try {

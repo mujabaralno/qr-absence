@@ -18,6 +18,7 @@ export type UpdateUserParams = {
   firstName?: string;
   lastName?: string;
   photo?: string;
+  approved?: boolean;
   role?: string;
 };
 
