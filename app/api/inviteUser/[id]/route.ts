@@ -38,7 +38,6 @@ export async function POST(
     });
 
     if (response.ok) {
-      toast.success("Undangan Telah Dikirim" )
       return NextResponse.json(
         { message: "Undangan berhasil dikirim!" },
         { status: 200 }
@@ -53,7 +52,6 @@ export async function POST(
     }
   } catch (err) {
     console.error("Error caught during fetch:", err);
-    toast.error("Terjadi kesalahan pada server" )
     return NextResponse.json(
       { error: "Terjadi kesalahan pada server" },
       { status: 500 }
