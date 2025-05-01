@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: Promise<{ organizationId: string }> }
-) {
-  const { organizationId } = await params;
+export async function POST(req: NextRequest, context: { params: { id: string } }) {
+  const { params } = context;
+  const organizationId = params.id; 
 
   const { email } = await req.json();
 
@@ -38,23 +36,15 @@ export async function POST(
     });
 
     if (response.ok) {
-      return NextResponse.json(
-        { message: "Undangan berhasil dikirim!" },
-        { status: 200 }
-      );
+      return NextResponse.json({ message: "Undangan berhasil dikirim!" }, { status: 200 });
     } else {
       const errorData = await response.json();
-      console.error("Error response from Clerk API:", errorData);
-      return NextResponse.json(
-        { error: errorData.error ?? "Terjadi kesalahan" },
-        { status: 400 }
-      );
+      console.error('Error response from Clerk API:', errorData);
+      return NextResponse.json({ error: errorData.error ?? "Terjadi kesalahan" }, { status: 400 });
     }
   } catch (err) {
-    console.error("Error caught during fetch:", err);
-    return NextResponse.json(
-      { error: "Terjadi kesalahan pada server" },
-      { status: 500 }
-    );
+    console.error('Error caught during fetch:', err);
+    return NextResponse.json({ error: "Terjadi kesalahan pada server" }, { status: 500 });
   }
 }
+
