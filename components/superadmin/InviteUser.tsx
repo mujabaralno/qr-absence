@@ -38,6 +38,7 @@ const InviteUser = () => {
 
       if (response.ok) {
         setSuccess(data.message);
+        toast.success("Email berhasil terkirim")
       } else {
         setError(data.error ?? "Terjadi kesalahan");
         toast.error("Terjadi kesalahan pada server");
