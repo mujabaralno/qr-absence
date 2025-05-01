@@ -4,7 +4,7 @@ import { superAdminNavigation } from "@/constants";
 import { checkRole } from "@/utils/checkRole";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-
+import { Toaster } from "@/components/ui/sonner";
 export default async function SuperAdminLayout({
     children,
   }: Readonly<{
@@ -27,7 +27,9 @@ export default async function SuperAdminLayout({
 
         <section className="wrapper">
           <Header />
-          <div className="w-full">{children}</div>
+          <div className="w-full">{children}
+          <Toaster />
+          </div>
         </section>
       </div>
     </main>

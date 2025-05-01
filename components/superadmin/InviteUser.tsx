@@ -1,36 +1,37 @@
-"use client"
-import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+"use client";
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
+import { toast } from "sonner";
 
 const InviteUser = () => {
   const { id: organizationId } = useParams();
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   useEffect(() => {
     if (!organizationId) {
-      setError('ID organisasi tidak ditemukan.');
+      setError("ID organisasi tidak ditemukan.");
     }
   }, [organizationId]);
 
   const inviteUser = async (email: string) => {
     setLoading(true);
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
 
     if (!organizationId) {
-      setError('Organisasi ID tidak ditemukan');
+      setError("Organisasi ID tidak ditemukan");
       setLoading(false);
       return;
     }
 
     try {
       const response = await fetch(`/api/inviteUser/${organizationId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
       });
 
       const data = await response.json();
@@ -38,10 +39,12 @@ const InviteUser = () => {
       if (response.ok) {
         setSuccess(data.message);
       } else {
-        setError(data.error ?? 'Terjadi kesalahan');
+        setError(data.error ?? "Terjadi kesalahan");
+        toast.error("Terjadi kesalahan pada server");
       }
     } catch (err: unknown) {
-      throw new Error(err instanceof Error ? err.message : String(err));
+      console.error("Error caught during fetch:", err);
+      toast.error("Terjadi kesalahan pada server");
     } finally {
       setLoading(false);
     }
@@ -52,7 +55,7 @@ const InviteUser = () => {
     if (email) {
       inviteUser(email);
     } else {
-      setError('Alamat email wajib diisi!');
+      setError("Alamat email wajib diisi!");
     }
   };
 
@@ -63,7 +66,9 @@ const InviteUser = () => {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="email" className="block">Email</label>
+          <label htmlFor="email" className="block">
+            Email
+          </label>
           <input
             type="email"
             id="email"
@@ -77,10 +82,12 @@ const InviteUser = () => {
 
         <button
           type="submit"
-          className={`w-full p-2 bg-blue-500 text-white rounded-md ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+          className={`w-full p-2 bg-blue-500 text-white rounded-md ${
+            loading ? "opacity-50 cursor-not-allowed" : ""
+          }`}
           disabled={loading}
         >
-          {loading ? 'Mengirim...' : 'Undang Pengguna'}
+          {loading ? "Mengirim..." : "Undang Pengguna"}
         </button>
       </form>
     </div>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import localFont from "next/font/local";
+import { Toaster } from "@/components/ui/sonner";
 
 
 const outfit = localFont({
@@ -26,7 +27,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <ClerkProvider>
-        <body className={`${outfit.className} antialiased`}>{children}</body>
+        <body className={`${outfit.className} antialiased`}>{children}
+        <Toaster />
+        </body>
       </ClerkProvider>
     </html>
   );
