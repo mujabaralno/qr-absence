@@ -5,9 +5,14 @@ import React from "react";
 import { getOrganizationById } from "@/actions/organization.actions";
 import { formatDateTime } from "@/utils";
 
-const OrganizationDetailsPage = async ({ params: { id } }: { params: { id: string } })  => {
-  const isSuperAdmin = await checkRole("superadmin");
+export default async function OrganizationDetailsPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
 
+  const isSuperAdmin = await checkRole("superadmin");
   const organization = await getOrganizationById(id);
 
   return (
@@ -41,6 +46,4 @@ const OrganizationDetailsPage = async ({ params: { id } }: { params: { id: strin
       )}
     </section>
   );
-};
-
-export default OrganizationDetailsPage;
+}

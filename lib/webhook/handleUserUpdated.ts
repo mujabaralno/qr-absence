@@ -21,3 +21,5 @@ export async function handleUserUpdated(evt: WebhookEvent) {
     return new Response("Error updating user", { status: 500 });
   }
 }
+
+
