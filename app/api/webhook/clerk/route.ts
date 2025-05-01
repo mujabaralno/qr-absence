@@ -52,6 +52,7 @@ export async function POST(req: Request) {
 
   // CREATE
   if (eventType === "user.created") {
+    console.log("📦 Webhook user.created payload:", evt.data);
     const {
       id,
       email_addresses,
@@ -60,6 +61,8 @@ export async function POST(req: Request) {
       last_name,
       public_metadata,
     } = evt.data;
+    
+    console.log("📦 public_metadata:", public_metadata);
 
     const organizationId = public_metadata?.organizationId as string;
     const role = public_metadata?.role as string;

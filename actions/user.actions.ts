@@ -31,7 +31,7 @@ export async function createUser( user: CreateUserParams) {
       lastName: user.lastName,
       role: user.role,
       approved: user.approved,
-      organization: user.organizationId,
+      organizationId: user.organizationId,
     });
 
     return JSON.parse(JSON.stringify(newUser));
