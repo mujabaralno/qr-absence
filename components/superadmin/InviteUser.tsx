@@ -41,7 +41,7 @@ const InviteUser = () => {
         toast.success("Email berhasil terkirim")
       } else {
         setError(data.error ?? "Terjadi kesalahan");
-        toast.error("Terjadi kesalahan pada server");
+        toast.error("Terjadi kesalahan pada server ");
       }
     } catch (err: unknown) {
       console.error("Error caught during fetch:", err);
