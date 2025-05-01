@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
+import localFont from "next/font/local";
 
-const IBMPlex = IBM_Plex_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-ibm-plex",
+
+const outfit = localFont({
+  src: [
+    { path: "/fonts/Outfit-Bold.ttf", weight: "700", style: "normal" },
+    { path: "/fonts/Outfit-Regular.ttf", weight: "400", style: "normal" },
+    { path: "/fonts/Outfit-Medium.ttf", weight: "500", style: "normal" },
+    { path: "/fonts/Outfit-SemiBold.ttf", weight: "600", style: "normal" },
+  ],
 });
 
 export const metadata: Metadata = {
@@ -22,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <ClerkProvider>
-        <body className={`${IBMPlex.variable} antialiased`}>{children}</body>
+        <body className={`${outfit.className} antialiased`}>{children}</body>
       </ClerkProvider>
     </html>
   );

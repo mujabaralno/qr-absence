@@ -1,9 +1,4 @@
 export type CreateUserParams = {
-  organization: {
-    _id: string;
-    organizationName: string
-  }
-  user: {
     clerkId: string;
     email: string;
     photo: string;
@@ -11,7 +6,7 @@ export type CreateUserParams = {
     lastName: string;
     role: string;
     approved: boolean;
-  };
+    organizationId: string
 };
 
 export type UpdateUserParams = {
@@ -27,6 +22,8 @@ export type CreateOrganizationParams = {
     organizationName: string;
     description: string;
     imageUrl: string;
+    responsiblePerson: string
+    origin: string
   };
   path: string;
 };
@@ -36,6 +33,16 @@ export type UpdateOrganizationParams = {
     organizationName?: string;
     description?: string;
     imageUrl?: string;
+    responsiblePerson?: string
+    origin?: string
   };
   path: string
 };
+
+
+
+
+export type SearchParamProps = {
+  params: { id: string }
+  searchParams: { [key: string]: string | string[] | undefined }
+}

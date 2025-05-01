@@ -2,9 +2,11 @@ import { Schema, model, models } from "mongoose";
 
 export interface IOrganization extends Document {
   _id: string;
-  organizationName: string,
-  description: string,
-  imageUrl: string
+  organizationName: string;
+  description: string;
+  imageUrl: string;
+  responsiblePerson: string; 
+  origin: string; 
 }
 
 const OrganizationSchema = new Schema(
@@ -19,7 +21,15 @@ const OrganizationSchema = new Schema(
     },
     imageUrl: {
       type: String,
-    }
+    },
+    responsiblePerson: {
+      type: String,
+      required: true, 
+    },
+    origin: {
+      type: String,
+      required: true, 
+    },
   },
   {
     timestamps: true,

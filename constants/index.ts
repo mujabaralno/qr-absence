@@ -7,7 +7,7 @@ export const superAdminNavigation = [
     {
         label: 'All Organizations',
         route: '/superadmin/all-organizations',
-        img: '/icons/organization.svg'
+        img: '/icons/home.svg'
     },
     {
         label: 'All User',
@@ -68,5 +68,7 @@ export const adminNavigation = [
 export const createOrganizationDefaultValues = {
     organizationName: "",
     description: "",
-    imageUrl: '',
+    imageUrl: "",
+    responsiblePerson: "",
+    origin: ""
 };

@@ -1,9 +1,9 @@
 import React from 'react'
 
-const AllOraganizationPage = () => {
+const AllOrganizationPage = () => {
   return (
-    <div>AllOraganizationPage</div>
+    <div>AllOrganizationPage</div>
   )
 }
 
-export default AllOraganizationPage
+export default AllOrganizationPage

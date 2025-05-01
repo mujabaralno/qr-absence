@@ -1,39 +1,35 @@
+// app/api/webhook/clerk/route.ts
+
 import { clerkClient, WebhookEvent } from "@clerk/nextjs/server";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { Webhook } from "svix";
 
 import { createUser, deleteUser, updateUser } from "@/actions/user.actions";
+import { connectToDatabase } from "@/lib/database/mongoose";
 
 export async function POST(req: Request) {
   const CLERK_WEBHOOK_SIGNING_SECRET = process.env.CLERK_WEBHOOK_SIGNING_SECRET;
 
   if (!CLERK_WEBHOOK_SIGNING_SECRET) {
-    throw new Error(
-      "Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local"
-    );
+    throw new Error("Please add CLERK_WEBHOOK_SIGNING_SECRET to .env");
   }
 
-  // Get the headers
   const headerPayload = headers();
   const svix_id = (await headerPayload).get("svix-id");
   const svix_timestamp = (await headerPayload).get("svix-timestamp");
   const svix_signature = (await headerPayload).get("svix-signature");
 
-  // If there are no headers, error out
   if (!svix_id || !svix_timestamp || !svix_signature) {
-    return new Response("Error occurred -- no svix headers", { status: 400 });
+    return new Response("Missing svix headers", { status: 400 });
   }
 
-  // Get the body
   const payload = await req.json();
   const body = JSON.stringify(payload);
 
-  // Create a new Svix instance with your secret
   const wh = new Webhook(CLERK_WEBHOOK_SIGNING_SECRET);
 
   let evt: WebhookEvent;
-
   try {
     evt = wh.verify(body, {
       "svix-id": svix_id,
@@ -42,96 +38,78 @@ export async function POST(req: Request) {
     }) as WebhookEvent;
   } catch (err) {
     console.error("Error verifying webhook:", err);
-    return new Response("Error occured", {
-      status: 400,
-    });
+    return new Response("Webhook verification failed", { status: 400 });
   }
 
-  // Get the ID and type of the event
-  const { id } = evt.data;
   const eventType = evt.type;
 
-  // CREATE
   if (eventType === "user.created") {
-    const { id, email_addresses, image_url, first_name, last_name } = evt.data;
+    const { id, email_addresses, image_url, first_name, last_name, public_metadata } = evt.data;
 
-    const user = {
-      clerkId: id,
-      email: email_addresses[0].email_address,
-      firstName: first_name!,
-      lastName: last_name!,
-      photo: image_url,
-      approved: false,
-      role: "user",
-    };
-
-    const organization = {
-      _id: "id_organisasi_xxx",
-      organizationName: "Nama Organisasi",
-    };
+    const organizationId = public_metadata.organizationId as string;
+    const role = public_metadata.role as string || "user";
+    const approved = public_metadata.approved as boolean || false;
 
     try {
-      const newUser = await createUser({ user, organization });
+      await connectToDatabase();
+
+      const newUser = await createUser({
+        clerkId: id,
+        email: email_addresses[0].email_address,
+        firstName: first_name ?? "",
+        lastName: last_name ?? "",
+        photo: image_url,
+        role: role,
+        approved: approved,
+        organizationId: organizationId,
+      });
+
+      // Setelah buat user di MongoDB, update publicMetadata di Clerk
       if (newUser) {
-        const result = await (
-          await clerkClient()
-        ).users.updateUserMetadata(id, {
-          publicMetadata: {
-            userId: newUser._id,
-            approved: false,
-            organization,
-            role: "user",
-          },
+        const result = await (await clerkClient()).users.updateUserMetadata(id, {
+          publicMetadata: { userId: newUser._id, ...public_metadata },
         });
         console.log("New user created:", result);
       }
-      return NextResponse.json({ message: "OK", user: newUser });
+
+      return NextResponse.json({ message: "User created successfully" });
     } catch (err) {
       console.error("Error during user creation:", err);
-      return new Response("Error occurred during user creation", {
-        status: 500,
-      });
+      return new Response("Error during user creation", { status: 500 });
     }
   }
 
-  // UPDATE
   if (eventType === "user.updated") {
-    const { id: updatedUserId, image_url, first_name, last_name } = evt.data;
+    const { id: clerkUserId, image_url, first_name, last_name } = evt.data;
 
     const user = {
-      firstName: first_name!,
-      lastName: last_name!,
+      firstName: first_name ?? "",
+      lastName: last_name ?? "",
       photo: image_url,
-      approved: false,
-      role: "user",
     };
 
     try {
-      const updatedUser = await updateUser(updatedUserId, user);
-      return NextResponse.json({ message: "OK", user: updatedUser });
+      const updatedUser = await updateUser(clerkUserId, user);
+      return NextResponse.json({ message: "User updated", user: updatedUser });
     } catch (err) {
-      console.error("Error during user update:", err);
-      return new Response("Error occurred during user update", { status: 500 });
+      console.error("Error updating user:", err);
+      return new Response("Error updating user", { status: 500 });
     }
   }
 
-  // DELETE
   if (eventType === "user.deleted") {
     const { id: deletedUserId } = evt.data;
-
+    if (!deletedUserId) {
+      return new Response("User ID not found in event data", { status: 400 });
+    }
     try {
-      const deletedUser = await deleteUser(deletedUserId!);
-      return NextResponse.json({ message: "OK", user: deletedUser });
+      const deletedUser = await deleteUser(deletedUserId);
+      return NextResponse.json({ message: "User deleted", user: deletedUser });
     } catch (err) {
-      console.error("Error during user deletion:", err);
-      return new Response("Error occurred during user deletion", {
-        status: 500,
-      });
+      console.error("Error deleting user:", err);
+      return new Response("Error deleting user", { status: 500 });
     }
   }
 
-  console.log(`Webhook with ID of ${id} and type of ${eventType}`);
-  console.log("Webhook body:", body);
-
-  return new Response("", { status: 200 });
+  return new Response("OK", { status: 200 });
 }

@@ -25,16 +25,16 @@ export async function getOrganizationById(organizationId: string) {
   try {
     await connectToDatabase();
 
-    const organization = await Organization.findOne({ organizationId });
+    const organization = await Organization.findById(organizationId);
 
     if (!organization) throw new Error("Organization Not Found");
 
-    // Return the organization data
     return JSON.parse(JSON.stringify(organization));
   } catch (error) {
     handleError(error);
   }
 }
+
 
 // UPDATE
 export async function updateOrganization({organization, path}: UpdateOrganizationParams) {

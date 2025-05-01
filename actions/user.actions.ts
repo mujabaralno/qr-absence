@@ -8,17 +8,30 @@ import { handleError } from "@/utils";
 import { CreateUserParams, UpdateUserParams } from "@/types";
 import Organization from "@/lib/database/models/organization.model";
 
+const getOrganizationByName = async (name: string) => {
+  return Organization.findOne({ name: { $regex: name, $options: 'i' }})
+}
+
+const populateOrganization = (query: any) => {
+  return query
+    .populate({ path: 'organization', model: Organization, select: '_id organizationName' })
+}
+
+
 // CREATE
-export async function createUser({ organization, user }: CreateUserParams) {
+export async function createUser( user: CreateUserParams) {
   try {
     await connectToDatabase();
 
-    const organizationUser = await Organization.findById(organization._id);
-    if (!organizationUser) throw new Error("Organizer not found");
-
     const newUser = await User.create({
-      ...user,
-      organizationId: organization._id,
+      clerkId: user.clerkId,
+      email: user.email,
+      photo: user.photo,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role: user.role,
+      approved: user.approved,
+      organization: user.organizationId,
     });
 
     return JSON.parse(JSON.stringify(newUser));

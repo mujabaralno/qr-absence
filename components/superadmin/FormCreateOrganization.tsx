@@ -79,7 +79,7 @@ const FormCreateOrganization = ({
 
         if (newOrganization) {
           form.reset();
-          router.push(`/all-organizations/${newOrganization._id}`);
+          router.push(`/superadmin/all-organizations/${newOrganization._id}`);
         }
       } catch (error) {
         console.log(error);
@@ -90,7 +90,7 @@ const FormCreateOrganization = ({
       try {
         const updatedOrganization = await updateOrganization({
           organization: { ...values, imageUrl: uploadedImageUrl },
-          path: `/all-organizations/${organizationId}`,
+          path: `/superadmin/all-organizations/${organizationId}`,
         });
 
         if (updatedOrganization) {
@@ -116,6 +116,40 @@ const FormCreateOrganization = ({
               <FormControl>
                 <Input
                   placeholder="Organization Name"
+                  {...field}
+                  className="input-field"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="responsiblePerson"
+          render={({ field }) => (
+            <FormItem className="w-full">
+              <FormControl>
+                <Input
+                  placeholder="Responsible Person"
+                  {...field}
+                  className="input-field"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="origin"
+          render={({ field }) => (
+            <FormItem className="w-full">
+              <FormControl>
+                <Input
+                  placeholder="Darimana organisasinya"
                   {...field}
                   className="input-field"
                 />
@@ -165,8 +199,9 @@ const FormCreateOrganization = ({
           disabled={form.formState.isSubmitting}
           className="button col-span-2 w-full"
         >
-          {form.formState.isSubmitting ? "Submitting..." : `${type} Organization`}
-
+          {form.formState.isSubmitting
+            ? "Submitting..."
+            : `${type} Organization`}
         </Button>
       </form>
     </Form>
