@@ -1,10 +1,8 @@
-"use client"
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation'; // Untuk mengambil ID dari URL
+import { useParams } from 'next/navigation';
 
 const InviteUser = () => {
-  const { id: organizationId } = useParams(); // Ambil organizationId dari URL params
-  console.log(organizationId)
+  const { id: organizationId } = useParams();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -16,7 +14,6 @@ const InviteUser = () => {
     }
   }, [organizationId]);
 
-  // Fungsi untuk mengirim undangan
   const inviteUser = async (email: string) => {
     setLoading(true);
     setError('');
@@ -31,9 +28,7 @@ const InviteUser = () => {
     try {
       const response = await fetch(`/api/inviteUser/${organizationId}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
       });
 
@@ -44,14 +39,14 @@ const InviteUser = () => {
       } else {
         setError(data.error ?? 'Terjadi kesalahan');
       }
-    } catch (err) {
+    } catch (err: unknown) {
       throw new Error(err instanceof Error ? err.message : String(err));
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (email) {
       inviteUser(email);

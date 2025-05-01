@@ -6,7 +6,7 @@ import { getOrganizationById } from "@/actions/organization.actions";
 import { formatDateTime } from "@/utils";
 import { SearchParamProps } from '@/types'
 
-const OrganizationDetailsPage = async ({ params, searchParams }: SearchParamProps)  => {
+const OrganizationDetailsPage = async ({ params }: SearchParamProps)  => {
   const { id } = await params;
   const isSuperAdmin = await checkRole("superadmin");
 
