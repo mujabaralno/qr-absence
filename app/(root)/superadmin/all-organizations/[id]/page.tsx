@@ -7,7 +7,7 @@ import { formatDateTime } from "@/utils";
 import { SearchParamProps } from '@/types'
 
 const OrganizationDetailsPage = async ({ params }: SearchParamProps)  => {
-  const { id } = await params;
+  const { id } = params;
   const isSuperAdmin = await checkRole("superadmin");
 
   const organization = await getOrganizationById(id);
