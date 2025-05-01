@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
 
-const InviteUser = ({ organizationId }: { organizationId: string }) => {
+const InviteUser = () => {
   const { id: organizationId } = useParams();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
