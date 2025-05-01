@@ -45,7 +45,7 @@ const InviteUser = () => {
         setError(data.error ?? 'Terjadi kesalahan');
       }
     } catch (err) {
-      setError('Terjadi kesalahan tidak terduga');
+      throw new Error(err instanceof Error ? err.message : String(err));
     } finally {
       setLoading(false);
     }
