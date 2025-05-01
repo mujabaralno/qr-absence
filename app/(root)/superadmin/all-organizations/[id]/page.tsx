@@ -4,10 +4,8 @@ import Image from "next/image";
 import React from "react";
 import { getOrganizationById } from "@/actions/organization.actions";
 import { formatDateTime } from "@/utils";
-import { SearchParamProps } from '@/types'
 
-const OrganizationDetailsPage = async ({ params }: SearchParamProps)  => {
-  const { id } = params;
+const OrganizationDetailsPage = async ({ params: { id } }: { params: { id: string } })  => {
   const isSuperAdmin = await checkRole("superadmin");
 
   const organization = await getOrganizationById(id);
