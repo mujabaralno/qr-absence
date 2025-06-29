@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import 'leaflet/dist/leaflet.css';
 import { ClerkProvider } from "@clerk/nextjs";
 import localFont from "next/font/local";
 import { Toaster } from "@/components/ui/sonner";
@@ -25,8 +26,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <ClerkProvider>
+    <html lang="en" suppressHydrationWarning>
+      <ClerkProvider
+      appearance={{
+        layout: {
+          socialButtonsVariant: "iconButton",
+          logoImageUrl: "/icons/scango.svg",
+        },
+        variables: {
+          colorText: "#252525",
+          colorPrimary: "#0E78F9",
+          colorBackground: "#fff",
+          colorInputBackground: "#F8F8FF",
+          colorInputText: "#252525",
+        },
+      }}
+      >
         <body className={`${outfit.className} antialiased`}>{children}
         <Toaster />
         </body>

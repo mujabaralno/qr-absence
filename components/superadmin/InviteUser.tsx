@@ -65,7 +65,7 @@ const InviteUser = () => {
       {error && <div className="text-red-600 mb-4">{error}</div>}
       {success && <div className="text-green-600 mb-4">{success}</div>}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-7">
         <div>
           <label htmlFor="email" className="block">
             Email
@@ -76,19 +76,19 @@ const InviteUser = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-md"
-            placeholder="Email pengguna"
+            placeholder="Email Admin"
             required
           />
         </div>
 
         <button
           type="submit"
-          className={`w-full p-2 bg-blue-500 text-white rounded-md ${
+          className={`w-full p-2 bg-[#25388C] text-white rounded-md ${
             loading ? "opacity-50 cursor-not-allowed" : ""
           }`}
           disabled={loading}
         >
-          {loading ? "Mengirim..." : "Undang Pengguna"}
+          {loading ? "Mengirim..." : "Undang Admin"}
         </button>
       </form>
     </div>

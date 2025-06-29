@@ -9,17 +9,19 @@ import { CreateUserParams, UpdateUserParams } from "@/types";
 import Organization from "@/lib/database/models/organization.model";
 
 const getOrganizationByName = async (name: string) => {
-  return Organization.findOne({ name: { $regex: name, $options: 'i' }})
-}
+  return Organization.findOne({ name: { $regex: name, $options: "i" } });
+};
 
 const populateOrganization = (query: any) => {
-  return query
-    .populate({ path: 'organization', model: Organization, select: '_id organizationName' })
-}
-
+  return query.populate({
+    path: "organization",
+    model: Organization,
+    select: "_id organizationName",
+  });
+};
 
 // CREATE
-export async function createUser( user: CreateUserParams) {
+export async function createUser(user: CreateUserParams) {
   try {
     await connectToDatabase();
 
@@ -55,6 +57,53 @@ export async function getUserById(userId: string) {
   }
 }
 
+// in @/actions/user.actions.ts
+export async function getAllUser() {
+  try {
+    await connectToDatabase();
+    
+    const users = await User.find();
+    
+    // Ubah setiap user menjadi plain object dengan ID sebagai string
+    return users.map((user) => ({
+      _id: user._id.toString(), // <<< PENTING: Ubah _id menjadi string
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      organizationId: user.organizationId.toString(), // <<< PENTING: Ubah organizationId menjadi string
+      img: user.photo,
+      dateJoined: user.createdAt.toISOString(), // Gunakan ISO string untuk konsistensi
+      role: user.role,
+    }));
+  } catch (error) {
+    handleError(error);
+    return [];
+  }
+}
+
+//READ BY ID
+
+export async function getUsersByOrganizationId(organizationId: string) {
+  try {
+    await connectToDatabase();
+
+    const users = await User.find({ organizationId });
+
+    return users.map((user) => ({
+      _id: user._id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      img: user.photo,
+      dateJoined: user.createdAt.toLocaleDateString(),
+      role: user.role,
+    }));
+  } catch (error) {
+    console.error("Failed to get users by organizationId:", error);
+    return [];
+  }
+}
+
 // UPDATE
 export async function updateUser(clerkId: string, user: UpdateUserParams) {
   try {
@@ -73,12 +122,12 @@ export async function updateUser(clerkId: string, user: UpdateUserParams) {
 }
 
 // DELETE
-export async function deleteUser(clerkId: string) {
+export async function deleteUser(_id: string) {
   try {
     await connectToDatabase();
 
     // Find user to delete
-    const userToDelete = await User.findOne({ clerkId });
+    const userToDelete = await User.findOne({ _id });
 
     if (!userToDelete) {
       throw new Error("User not found");
