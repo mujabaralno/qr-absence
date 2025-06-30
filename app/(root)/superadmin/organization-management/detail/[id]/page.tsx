@@ -86,16 +86,6 @@ export default async function OrganizationDetailsPage({
                     <Users className="w-8 h-8 text-blue-200" />
                   </div>
                 </div>
-
-                <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-xl p-6 text-white">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-green-100 text-sm">Active Projects</p>
-                      <p className="text-2xl font-bold">8</p>
-                    </div>
-                    <Building2 className="w-8 h-8 text-green-200" />
-                  </div>
-                </div>
               </div>
             </div>
 
