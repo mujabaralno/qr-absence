@@ -74,7 +74,7 @@ export default async function OrganizationDetailsPage({
               </div>
 
               {/* Stats Cards */}
-              <div className="grid sm:grid-cols-2 gap-4">
+              <div className="grid sm:grid-cols-1 gap-4">
                 <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-6 text-white">
                   <div className="flex items-center justify-between">
                     <div>
