@@ -23,22 +23,43 @@ const populateOrganization = (query: any) => {
 // CREATE
 export async function createUser(user: CreateUserParams) {
   try {
+    console.log("🔄 Connecting to database...");
     await connectToDatabase();
+    
+    console.log("🔄 Creating user with data:", user);
+    
+    // Validasi data sebelum create
+    if (!user.clerkId || !user.email) {
+      throw new Error("Missing required fields: clerkId and email are required");
+    }
+    
+    // Check if user already exists
+    const existingUser = await User.findOne({ clerkId: user.clerkId });
+    if (existingUser) {
+      console.log("⚠️ User already exists:", existingUser);
+      return JSON.parse(JSON.stringify(existingUser));
+    }
 
     const newUser = await User.create({
       clerkId: user.clerkId,
       email: user.email,
-      photo: user.photo,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      role: user.role,
-      approved: user.approved,
-      organizationId: user.organizationId,
+      photo: user.photo || "",
+      firstName: user.firstName || "",
+      lastName: user.lastName || "",
+      role: user.role || "user",
+      approved: user.approved || false,
+      organizationId: user.organizationId || "",
     });
 
+    console.log("✅ User created successfully:", newUser);
     return JSON.parse(JSON.stringify(newUser));
+    
   } catch (error) {
-    handleError(error);
+    console.error("🔥 Error in createUser:", error);
+    console.error("🔥 User data that failed:", user);
+    
+    // Re-throw the error so webhook can handle it properly
+    throw error;
   }
 }
 
