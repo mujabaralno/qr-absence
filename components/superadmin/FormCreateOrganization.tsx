@@ -133,7 +133,7 @@ const FormCreateOrganization = ({
             }
           }
 
-          router.push(`/superadmin/organization-management/${newOrganization._id}`);
+          router.push(`/superadmin/organization-management/detail/${newOrganization._id}`);
         }
       } catch (error) {
         console.log(error);
@@ -147,12 +147,12 @@ const FormCreateOrganization = ({
             ...values, imageUrl: uploadedImageUrl,
             _id: ""
           },
-          path: `/superadmin/organization-management/${organizationId}`,
+          path: `/superadmin/organization-management/detail/${organizationId}`,
         });
 
         if (updatedOrganization) {
           form.reset();
-          router.push(`/superadmin/organization-management/${updatedOrganization._id}`);
+          router.push(`/superadmin/organization-management/detail/${updatedOrganization._id}`);
         }
       } catch (error) {
         console.log(error);
